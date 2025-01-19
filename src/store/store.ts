@@ -1,15 +1,11 @@
 import { create } from "zustand";
+import { TodoState } from "../types";
 
-type CounterState = {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-};
-
-const useCounterStore = create<CounterState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
+const useAppState = create<TodoState>((set) => ({
+  isSignedIn: false,
+  interviewsList: [],
+  setIsSignedIn: (isSignedIn: boolean) => set({ isSignedIn }),
+  setInterviewsList: (interviewsList) => set({ interviewsList }),
 }));
 
-export { useCounterStore };
+export { useAppState };

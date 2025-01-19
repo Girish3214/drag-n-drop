@@ -1,7 +1,31 @@
 import { useState } from "react";
+import { signInWithPopup, UserCredential } from "firebase/auth";
+import { auth, googleProvider } from "../../services";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
+
+  const [user, setUser] = useState<unknown | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  console.log({ user });
+  // Sign in with Google
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      const result: UserCredential = await signInWithPopup(
+        auth,
+        googleProvider
+      );
+      const user = result.user;
+      setUser(user);
+    } catch (error) {
+      console.error("Error signing in with Google: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <div className="w-full max-w-sm p-6 bg-gray-800 rounded-lg shadow-md">
@@ -51,7 +75,12 @@ const Login: React.FC = () => {
         <div className="flex justify-around">
           <button
             type="button"
-            className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none"
+            onClick={handleGoogleSignIn}
+            className={`w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ${
+              loading ? "cursor-wait" : ""
+            }`}
+            disabled={loading}
+            // className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none"
           >
             <span className="text-white text-lg">G</span>
           </button>
