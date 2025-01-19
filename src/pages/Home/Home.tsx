@@ -1,11 +1,11 @@
 import { Header } from "../../components";
-import { TodoList } from "../TodoList";
+import { InterviewList } from "../InterviewList";
 
 const Home = () => {
   return (
     <div>
       <Header />
-      <TodoList />
+      <InterviewList />
     </div>
   );
 };

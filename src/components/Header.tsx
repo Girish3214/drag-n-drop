@@ -3,8 +3,9 @@ import { useAppState } from "../store";
 import { dummyData } from "../utils/dummyData";
 
 const Header = () => {
-  const { isSignedIn, interviewsList, setIsSignedIn, setInterviewsList } =
-    useAppState((state) => state);
+  const isSignedIn = useAppState((state) => state.isSignedIn);
+  const setIsSignedIn = useAppState((state) => state.setIsSignedIn);
+  const setInterviewsList = useAppState((state) => state.setInterviewsList);
 
   const handleSignOut = () => {
     setIsSignedIn(false);
@@ -14,7 +15,6 @@ const Header = () => {
     setInterviewsList(dummyData);
   }, []);
 
-  console.log({ interviewsList });
   return (
     <div className="w-full p-4 flex justify-between items-center text-center shadow-md">
       <h1 className="text-2xl font-bold">Interview List</h1>
