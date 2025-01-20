@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { ColumnType } from "../../types";
-import { AddInterview, JobCard } from "../../components";
+import { ColumnType, Todo } from "../../types";
+import { AddInterview, DropIndicator, JobCard } from "../../components";
+import { useDragEvent } from "../../hooks";
 
 const Column = ({
   title,
@@ -9,6 +10,13 @@ const Column = ({
   column,
   setInterviewsList,
 }: ColumnType) => {
+  const {
+    clearHighlights,
+    getIndicators,
+    highlightIndicator,
+    getNearestIndicator,
+  } = useDragEvent();
+
   const [active, setActive] = useState<boolean>(false);
 
   const interviewsList = useMemo(() => {
@@ -32,22 +40,51 @@ const Column = ({
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setActive(false);
-      // const id = e.dataTransfer.getData("id");
-      // const column = e.dataTransfer.getData("column");
-      // const interviewsList = interviews.filter((inter) => inter.id !== id);
+      clearHighlights(getIndicators(column) as HTMLElement[]);
+      const interviewId = e.dataTransfer.getData("interviewId");
+      const indicators = getIndicators(column);
+      const { element } = getNearestIndicator(
+        e,
+        indicators as HTMLElement[]
+      ) || { element: null };
+      if (element) {
+        const before = element.dataset.before || "-1";
+        if (before !== interviewId) {
+          let copy = [...interviews];
 
-      // setInterviewsList(interviewsList);
+          let cardToTransfer = copy.find((c) => c.id === interviewId);
+          if (!cardToTransfer) return;
+          cardToTransfer = { ...cardToTransfer, type: column };
+
+          copy = copy.filter((c) => c.id !== interviewId);
+
+          const moveToBack = before === "-1";
+
+          if (moveToBack) {
+            copy.push(cardToTransfer as Todo);
+          } else {
+            const insertAtIndex = copy.findIndex((el) => el.id === before);
+            if (insertAtIndex === undefined) return;
+
+            copy.splice(insertAtIndex, 0, cardToTransfer as Todo);
+          }
+
+          setInterviewsList([...copy]);
+        }
+      }
     },
     [interviews, setInterviewsList]
   );
+
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-
+    highlightIndicator(e, column);
     setActive(true);
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    clearHighlights(getIndicators(column) as HTMLElement[]);
     setActive(false);
   }, []);
 
@@ -71,9 +108,11 @@ const Column = ({
           <JobCard
             key={interview.id}
             {...interview}
+            column={column}
             handleDragStart={handleDragStart}
           />
         ))}
+        <DropIndicator beforeId={null} column={column} />
         {column === "calls" && (
           <AddInterview column={column} setInterviewsList={setInterviewsList} />
         )}

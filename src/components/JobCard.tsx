@@ -1,13 +1,16 @@
 import { JobCardType } from "../types";
+import { DropIndicator } from "./DropIndicator";
 
 const JobCard = ({
   title,
   handleDragStart,
   id,
+  column,
   nextInterviewDate,
 }: JobCardType) => {
   return (
     <>
+      <DropIndicator beforeId={id} column={column ?? ""} />
       <div
         id={id}
         draggable="true"

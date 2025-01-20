@@ -1,9 +1,12 @@
 import { AddInterviewType } from "../types";
 import Add from "../assets/add.svg";
 import { Modal } from "./Modal";
-import { useState } from "react";
+import { memo, useState } from "react";
 
-const AddInterview = ({ setInterviewsList, column }: AddInterviewType) => {
+const AddInterview = memo(function AddInterview({
+  setInterviewsList,
+  column,
+}: AddInterviewType) {
   console.log({ column, setInterviewsList });
   const [open, setOpen] = useState<boolean>(false);
   return (
@@ -24,6 +27,6 @@ const AddInterview = ({ setInterviewsList, column }: AddInterviewType) => {
       </div>
     </>
   );
-};
+});
 
 export { AddInterview };
