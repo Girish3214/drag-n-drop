@@ -7,3 +7,13 @@ export type ColumnType = {
   column: TodoType;
   setInterviewsList: (interviewsList: Todo[]) => void;
 };
+
+export type AddInterviewType = {
+  column: TodoType;
+  setInterviewsList: (interviewsList: Todo[]) => void;
+};
+
+export type DeleteInterviewType = {
+  interviewsList: Todo[];
+  setInterviewsList: (interviewsList: Todo[]) => void;
+};

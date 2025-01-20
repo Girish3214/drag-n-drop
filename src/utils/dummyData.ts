@@ -5,9 +5,10 @@ export const dummyData = [
     id: "1",
     title: "Title 1",
     description: "Description 1",
-    type: "todo",
+    type: "calls",
     createdTime: "2023-01-01",
     updatedTime: "2023-01-01",
+    nextInterviewDate: "2023-01-01",
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ export const dummyData = [
     type: "in-progress",
     createdTime: "2023-01-02",
     updatedTime: "2023-01-02",
+    nextInterviewDate: "2023-01-02",
   },
   {
     id: "3",
@@ -24,14 +26,16 @@ export const dummyData = [
     type: "done",
     createdTime: "2023-01-01",
     updatedTime: "2023-01-02",
+    nextInterviewDate: "2023-01-03",
   },
   {
     id: "4",
     title: "Title 4",
     description: "Description 4",
-    type: "todo",
+    type: "calls",
     createdTime: "2023-01-03",
     updatedTime: "2023-01-03",
+    nextInterviewDate: "2023-01-03",
   },
   {
     id: "5",
@@ -40,6 +44,7 @@ export const dummyData = [
     type: "in-progress",
     createdTime: "2023-01-04",
     updatedTime: "2023-01-04",
+    nextInterviewDate: "2023-01-04",
   },
   {
     id: "6",
@@ -48,5 +53,15 @@ export const dummyData = [
     type: "not-selected",
     createdTime: "2023-01-03",
     updatedTime: "2023-01-03",
+    nextInterviewDate: "2023-01-04",
+  },
+  {
+    id: "7",
+    title: "Title 7",
+    description: "Description 7",
+    type: "not-selected",
+    createdTime: "2023-01-04",
+    updatedTime: "2023-01-04",
+    nextInterviewDate: "2023-01-04",
   },
 ] as Todo[];

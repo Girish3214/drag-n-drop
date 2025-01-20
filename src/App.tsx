@@ -4,9 +4,10 @@ import { Home } from "./pages/Home";
 
 function App() {
   return (
-    <div className="w-full h-screen bg-[#1b1b1f] text-white ">
+    <div className="w-full h-screen bg-neutral-900 text-neutral-50">
       {/* <Login /> */}
       <Home />
+      <div id="dialog"></div>
     </div>
   );
 }
