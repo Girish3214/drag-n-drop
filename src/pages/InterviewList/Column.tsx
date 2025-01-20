@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { ColumnType, Todo } from "../../types";
+import { ColumnType, InterviewType } from "../../types";
 import { AddInterview, DropIndicator, JobCard } from "../../components";
 import { useDragEvent } from "../../hooks";
 
@@ -19,7 +19,7 @@ const Column = ({
 
   const [active, setActive] = useState<boolean>(false);
 
-  const interviewsList = useMemo(() => {
+  const interviewsListMemo = useMemo(() => {
     return interviews.filter((inter) => inter.type === column);
   }, [column, interviews]);
 
@@ -28,7 +28,7 @@ const Column = ({
       e: React.DragEvent<HTMLDivElement>,
       interview: {
         id: string;
-        title: string;
+        companyName: string;
       }
     ) => {
       e.dataTransfer.setData("interviewId", interview.id);
@@ -61,12 +61,12 @@ const Column = ({
           const moveToBack = before === "-1";
 
           if (moveToBack) {
-            copy.push(cardToTransfer as Todo);
+            copy.push(cardToTransfer as InterviewType);
           } else {
             const insertAtIndex = copy.findIndex((el) => el.id === before);
             if (insertAtIndex === undefined) return;
 
-            copy.splice(insertAtIndex, 0, cardToTransfer as Todo);
+            copy.splice(insertAtIndex, 0, cardToTransfer as InterviewType);
           }
 
           setInterviewsList([...copy]);
@@ -93,7 +93,7 @@ const Column = ({
       <div className="mb-3 flex items-center justify-between">
         <h3 className={`font-medium ${headingColor}`}>{title}</h3>
         <span className="rounded text-sm text-neutral-400">
-          {interviewsList.length}
+          {interviewsListMemo.length}
         </span>
       </div>
       <div
@@ -104,7 +104,7 @@ const Column = ({
           active ? "bg-neutral-800/50" : "bg-neutral-800/0"
         }`}
       >
-        {interviewsList.map((interview) => (
+        {interviewsListMemo.map((interview) => (
           <JobCard
             key={interview.id}
             {...interview}
@@ -114,7 +114,10 @@ const Column = ({
         ))}
         <DropIndicator beforeId={null} column={column} />
         {column === "calls" && (
-          <AddInterview column={column} setInterviewsList={setInterviewsList} />
+          <AddInterview
+            interviewsList={interviews}
+            setInterviewsList={setInterviewsList}
+          />
         )}
       </div>
     </div>

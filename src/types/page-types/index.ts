@@ -1,19 +1,17 @@
-import { Todo, TodoType } from "../../types";
+import { InterviewType, InterviewCategoryType } from "../../types";
 
 export type ColumnType = {
   title: string;
   headingColor: string;
-  interviews: Todo[];
-  column: TodoType;
-  setInterviewsList: (interviewsList: Todo[]) => void;
+  interviews: InterviewType[];
+  column: InterviewCategoryType;
+  setInterviewsList: (interviewsList: InterviewType[]) => void;
 };
 
-export type AddInterviewType = {
-  column: TodoType;
-  setInterviewsList: (interviewsList: Todo[]) => void;
+export type InterviewActionButtonsType = {
+  interviewsList: InterviewType[];
+  setInterviewsList: (interviewsList: InterviewType[]) => void;
 };
+export type AddInterviewType = InterviewActionButtonsType;
 
-export type DeleteInterviewType = {
-  interviewsList: Todo[];
-  setInterviewsList: (interviewsList: Todo[]) => void;
-};
+export type DeleteInterviewType = InterviewActionButtonsType;

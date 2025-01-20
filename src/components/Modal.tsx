@@ -1,31 +1,47 @@
 import ReactDom from "react-dom";
 import { ModalProps } from "../types";
 
-const Modal = ({ open, onClose, children }: ModalProps) => {
+const Modal = ({ open, title, onClose, children }: ModalProps) => {
   if (!open) return null;
 
   return ReactDom.createPortal(
     <>
       {/* Modal overlay */}
       <div
-        className="fixed inset-0 z-50 bg-black bg-opacity-40 transition-all ease-in-out"
-        onClick={() => {
-          console.log("clicked");
-          onClose(false);
-        }}
+        className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out"
+        onClick={() => onClose(false)}
       />
 
       {/* Centered modal content */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="relative w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-          {/* Close button */}
-          <div
-            className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full text-black cursor-pointer"
-            onClick={() => onClose(false)}
-          >
-            x
+        <div className="relative w-full max-w-2xl p-6 bg-white rounded-xl shadow-2xl transform transition-transform duration-300 ease-in-out scale-100">
+          {/* Modal Header */}
+          <div className="flex justify-between items-center mb-4 border-b pb-2">
+            <h6 className="text-lg font-semibold text-gray-800">{title}</h6>
+            {/* Close button */}
+            <button
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+              onClick={() => onClose(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
-          {children}
+
+          {/* Modal Content */}
+          <div className="text-gray-700">{children}</div>
         </div>
       </div>
     </>,

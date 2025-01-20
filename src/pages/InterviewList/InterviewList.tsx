@@ -32,7 +32,7 @@ const InterviewList = () => {
         title="Not Selected"
         column="not-selected"
         interviews={interviewsList}
-        headingColor="text-neutral-500"
+        headingColor="text-red-500"
         setInterviewsList={setInterviewsList}
       />
       <DeleteInterview

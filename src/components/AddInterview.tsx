@@ -1,18 +1,29 @@
-import { AddInterviewType } from "../types";
+import { AddInterviewType, InterviewType } from "../types";
 import Add from "../assets/add.svg";
 import { Modal } from "./Modal";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
+import { ModalForm } from "./ModalForm";
 
 const AddInterview = memo(function AddInterview({
+  interviewsList,
   setInterviewsList,
-  column,
 }: AddInterviewType) {
-  console.log({ column, setInterviewsList });
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleSubmit = useCallback(
+    (interview: InterviewType) => {
+      setInterviewsList([...interviewsList, { ...interview, type: "calls" }]);
+      setOpen(false);
+    },
+    [interviewsList, setInterviewsList]
+  );
   return (
     <>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        Name
+      <Modal open={open} onClose={() => setOpen(false)} title="Add Interview">
+        <ModalForm
+          onClose={() => setOpen(false)}
+          onSubmit={(interview: InterviewType) => handleSubmit(interview)}
+        />
       </Modal>
       <div>
         <button

@@ -4,3 +4,4 @@ export * from "./DeleteInterview";
 export * from "./JobCard";
 export * from "./Modal";
 export * from "./DropIndicator";
+export * from "./ModalForm";

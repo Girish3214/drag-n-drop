@@ -1,27 +1,34 @@
-export type TodoType = "calls" | "in-progress" | "done" | "not-selected";
-export type Todo = {
+export type InterviewCategoryType =
+  | "calls"
+  | "in-progress"
+  | "done"
+  | "not-selected";
+export type InterviewType = {
   id: string;
-  title: string;
+  companyName: string;
   description: string;
-  type: TodoType;
+  type: InterviewCategoryType;
   nextInterviewDate: string;
   createdTime: string;
   updatedTime: string;
+  salaryDiscuss: string;
+  salaryRange: string;
+  rounds: { experience: string }[];
 };
 
 export type TodoState = {
   isSignedIn: boolean;
   setIsSignedIn: (isSignedIn: boolean) => void;
-  interviewsList: Todo[];
-  setInterviewsList: (interviewsList: Todo[]) => void;
+  interviewsList: InterviewType[];
+  setInterviewsList: (interviewsList: InterviewType[]) => void;
 };
 
-export type JobCardType = Todo & {
+export type JobCardType = InterviewType & {
   handleDragStart: (
     e: React.DragEvent<HTMLDivElement>,
     interview: {
       id: string;
-      title: string;
+      companyName: string;
     }
   ) => void;
   column?: string;
@@ -31,4 +38,5 @@ export type ModalProps = {
   onClose: (showModal: boolean) => void;
   children: React.ReactNode;
   open: boolean;
+  title?: string;
 };
