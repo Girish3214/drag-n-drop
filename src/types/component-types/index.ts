@@ -32,6 +32,7 @@ export type JobCardType = InterviewType & {
     }
   ) => void;
   column?: string;
+  handleSelectedData: (id: string) => void;
 };
 
 export type ModalProps = {

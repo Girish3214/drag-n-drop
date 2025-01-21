@@ -72,6 +72,12 @@ export const dummyData = [
       {
         experience: "NA",
       },
+      {
+        experience: "NA - 2",
+      },
+      {
+        experience: "NA - 3",
+      },
     ],
   },
   {

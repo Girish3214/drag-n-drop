@@ -1,6 +1,6 @@
 import { Formik, Form, Field, FieldArray } from "formik";
 import * as Yup from "yup";
-import { InterviewType } from "../types";
+import { InterviewType, ModalFormType } from "../types";
 
 const validationSchema = Yup.object({
   companyName: Yup.string().required("Company name is required"),
@@ -15,23 +15,17 @@ const validationSchema = Yup.object({
   ),
 });
 
-const ModalForm = ({
-  onClose,
-  onSubmit,
-}: {
-  onClose: (value: boolean) => void;
-  onSubmit: (values: InterviewType) => void;
-}) => {
+const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
   return (
     <Formik
       initialValues={
         {
-          companyName: "",
-          salaryDiscuss: "",
-          salaryRange: "",
-          description: "",
-          nextInterviewDate: "",
-          rounds: [{ experience: "" }],
+          companyName: initialData?.companyName || "",
+          salaryDiscuss: initialData?.salaryDiscuss || "",
+          salaryRange: initialData?.salaryRange || "",
+          description: initialData?.description || "",
+          nextInterviewDate: initialData?.nextInterviewDate || "",
+          rounds: initialData?.rounds || [{ experience: "" }],
         } as InterviewType
       }
       validationSchema={validationSchema}

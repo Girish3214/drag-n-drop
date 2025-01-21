@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { InterviewType, InterviewCategoryType } from "../../types";
 
 export type ColumnType = {
@@ -12,6 +13,15 @@ export type InterviewActionButtonsType = {
   interviewsList: InterviewType[];
   setInterviewsList: (interviewsList: InterviewType[]) => void;
 };
-export type AddInterviewType = InterviewActionButtonsType;
+
+export type ModalFormType = {
+  onClose: (value: boolean) => void;
+  onSubmit: (values: InterviewType) => void;
+  initialData: InterviewType | null;
+};
+
+export type AddInterviewType = {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
 
 export type DeleteInterviewType = InterviewActionButtonsType;

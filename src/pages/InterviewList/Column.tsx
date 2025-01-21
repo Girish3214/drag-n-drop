@@ -1,6 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { ColumnType, InterviewType } from "../../types";
-import { AddInterview, DropIndicator, JobCard } from "../../components";
+import {
+  AddInterview,
+  DropIndicator,
+  JobCard,
+  Modal,
+  ModalForm,
+} from "../../components";
 import { useDragEvent } from "../../hooks";
 
 const Column = ({
@@ -18,6 +24,24 @@ const Column = ({
   } = useDragEvent();
 
   const [active, setActive] = useState<boolean>(false);
+  const [selectedInterviewCard, setSelectedInterviewCard] = useState<
+    InterviewType | undefined
+  >(undefined);
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleSubmit = useCallback(
+    (interview: InterviewType) => {
+      setInterviewsList([...interviews, { ...interview, type: "calls" }]);
+      setOpen(false);
+    },
+    [interviews, setInterviewsList]
+  );
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    setSelectedInterviewCard(undefined);
+  }, []);
 
   const interviewsListMemo = useMemo(() => {
     return interviews.filter((inter) => inter.type === column);
@@ -89,38 +113,46 @@ const Column = ({
   }, []);
 
   return (
-    <div className="w-1/6 shrink-0">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className={`font-medium ${headingColor}`}>{title}</h3>
-        <span className="rounded text-sm text-neutral-400">
-          {interviewsListMemo.length}
-        </span>
+    <>
+      <Modal open={open} onClose={handleClose} title="Add Interview">
+        <ModalForm
+          onClose={handleClose}
+          onSubmit={(interview: InterviewType) => handleSubmit(interview)}
+          initialData={selectedInterviewCard || null}
+        />
+      </Modal>
+      <div className="w-1/6 shrink-0">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className={`font-medium ${headingColor}`}>{title}</h3>
+          <span className="rounded text-sm text-neutral-400">
+            {interviewsListMemo.length}
+          </span>
+        </div>
+        <div
+          onDrop={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`h-full w-full transition-colors ${
+            active ? "bg-neutral-800/50" : "bg-neutral-800/0"
+          }`}
+        >
+          {interviewsListMemo.map((interview) => (
+            <JobCard
+              key={interview.id}
+              {...interview}
+              column={column}
+              handleDragStart={handleDragStart}
+              handleSelectedData={(id: string) => {
+                setSelectedInterviewCard(interviews.find((c) => c.id === id));
+                setOpen(true);
+              }}
+            />
+          ))}
+          <DropIndicator beforeId={null} column={column} />
+          {column === "calls" && <AddInterview setOpen={setOpen} />}
+        </div>
       </div>
-      <div
-        onDrop={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        className={`h-full w-full transition-colors ${
-          active ? "bg-neutral-800/50" : "bg-neutral-800/0"
-        }`}
-      >
-        {interviewsListMemo.map((interview) => (
-          <JobCard
-            key={interview.id}
-            {...interview}
-            column={column}
-            handleDragStart={handleDragStart}
-          />
-        ))}
-        <DropIndicator beforeId={null} column={column} />
-        {column === "calls" && (
-          <AddInterview
-            interviewsList={interviews}
-            setInterviewsList={setInterviewsList}
-          />
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 
