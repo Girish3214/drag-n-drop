@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
 import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  UserCredential,
-} from "firebase/auth";
-import { addUserToDataBase, auth, googleProvider } from "../../services";
+  addUserToDataBase,
+  auth,
+  createUserWithEmail,
+  signInWithEmail,
+  signInWithGooglePopUp,
+} from "../../services";
 import { useAppState } from "../../store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
+const Login = ({ type }: { type: "login" | "signup" }) => {
   const navigate = useNavigate();
 
   const setUser = useAppState((state) => state.setUser);
@@ -25,12 +26,26 @@ const Login: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
+  const afterResult = (result: User) => {
+    setUser(result);
+    addUserToDataBase(result as User);
+    setIsSignedIn(true);
+    navigate("/");
+  };
   // Sign in with email and password
   const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, details.email, details.password);
+      let result;
+      if (type === "signup") {
+        result = await createUserWithEmail(details.email, details.password);
+      } else {
+        result = await signInWithEmail(details.email, details.password);
+      }
+      if (result) {
+        afterResult(result);
+      }
     } catch (error) {
       console.error("Error signing in: ", error);
     } finally {
@@ -41,15 +56,9 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      const result: UserCredential = await signInWithPopup(
-        auth,
-        googleProvider
-      );
-      const user = result.user;
-      setUser(user);
-      addUserToDataBase(user);
-      setIsSignedIn(true);
-      navigate("/");
+      await signInWithGooglePopUp().then((user) => {
+        afterResult(user);
+      });
     } catch (error) {
       console.error("Error signing in with Google: ", error);
     } finally {
@@ -85,10 +94,15 @@ const Login: React.FC = () => {
           Welcome
         </h1>
         <p className="text-sm text-center text-gray-400">
-          Don't have an account yet?{" "}
-          <a href="#" className="text-blue-500 hover:underline">
-            Sign up
-          </a>
+          {type === "login"
+            ? "Don't have an account yet?"
+            : "Already have an account?"}{" "}
+          <Link
+            to={type === "login" ? "/signup" : "/login"} // Use Link for navigation
+            className="text-blue-500 hover:underline"
+          >
+            {type === "login" ? "Sign up" : "Login"}
+          </Link>
         </p>
 
         {/* Form */}
@@ -126,10 +140,11 @@ const Login: React.FC = () => {
 
           <button
             type="submit"
+            disabled={loading}
             onClick={(e) => handleSignIn(e)}
             className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           >
-            Login
+            {type === "login" ? "Login" : "Sign Up"}
           </button>
         </form>
 

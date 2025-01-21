@@ -1,9 +1,15 @@
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
-import { createUserWithEmailAndPassword, signOut, User } from "firebase/auth";
+import { auth, db, googleProvider } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  User,
+} from "firebase/auth";
 
 const createUserWithEmail = async (email: string, password: string) => {
-  createUserWithEmailAndPassword(auth, email, password)
+  return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed up
       const user = userCredential.user;
@@ -15,6 +21,27 @@ const createUserWithEmail = async (email: string, password: string) => {
       const errorMessage = error.message;
       console.log({ errorCode, errorMessage });
     });
+};
+
+const signInWithEmail = async (email: string, password: string) => {
+  return signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      return user;
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log({ errorCode, errorMessage });
+    });
+};
+
+const signInWithGooglePopUp = async () => {
+  return signInWithPopup(auth, googleProvider).then((userCredential) => {
+    const user = userCredential.user;
+    return user;
+  });
 };
 const addUserToDataBase = async (user: User) => {
   const userDocRef = doc(db, "users", user.email ?? "NA"); // Reference to the user document (using user UID)
@@ -39,4 +66,10 @@ const handleLogout = async () => {
   }
 };
 
-export { createUserWithEmail, addUserToDataBase, handleLogout };
+export {
+  signInWithGooglePopUp,
+  createUserWithEmail,
+  addUserToDataBase,
+  signInWithEmail,
+  handleLogout,
+};
