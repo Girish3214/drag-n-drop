@@ -6,3 +6,4 @@ export * from "./Modal";
 export * from "./DropIndicator";
 export * from "./ModalForm";
 export * from "./RouteComponent";
+export * from "./Toast";

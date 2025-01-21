@@ -10,12 +10,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process?.env?.API_KEY ?? "AIzaSyCKjY6ZM1ZxDXHHlR25J69WTDjKDYhK4B0",
+  apiKey: "AIzaSyCKjY6ZM1ZxDXHHlR25J69WTDjKDYhK4B0",
   authDomain: "todo-list-bfd1b.firebaseapp.com",
   projectId: "todo-list-bfd1b",
   storageBucket: "todo-list-bfd1b.firebasestorage.app",
   messagingSenderId: "448549797663",
-  appId: process?.env?.APP_ID ?? "1:448549797663:web:e3b616a43119d4108aba2a",
+  appId: "1:448549797663:web:e3b616a43119d4108aba2a",
   measurementId: "G-B1ML3R95HH",
 };
 

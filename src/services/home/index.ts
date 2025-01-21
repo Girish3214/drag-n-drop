@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { InterviewType } from "../../types";
 import { auth, db } from "../firebase";
+import { showToast } from "../../components";
 
 const addInterview = async (interview: InterviewType) => {
   try {
@@ -46,8 +47,15 @@ const addInterview = async (interview: InterviewType) => {
       createdAt: new Date().toISOString(),
     });
 
-    console.log("Interview added successfully");
+    showToast({
+      type: "success",
+      message: "Interview added successfully",
+    });
   } catch (error) {
+    showToast({
+      type: "error",
+      message: "Error adding interview",
+    });
     console.error("Error adding interview: ", error);
     return {
       message: `An interview for ${interview.companyName} already exists.`,
@@ -85,16 +93,22 @@ const editInterview = async (interview: InterviewType) => {
         `No interview found for ${interview.companyName} to edit.`
       );
     }
-    console.log({ interview });
     // Update the interview data if it exists
     await updateDoc(interviewRef, {
       ...interview,
       updatedAt: new Date().toISOString(), // Optional: Store last updated time
     });
 
-    console.log("Interview updated successfully");
+    showToast({
+      type: "success",
+      message: "Interview updated successfully",
+    });
   } catch (error) {
     console.error("Error editing interview: ", error);
+    showToast({
+      type: "error",
+      message: "Error editing interview",
+    });
     return {
       message: `Error editing interview: No interview for ${interview.companyName} to edit.`,
       type: "error",
@@ -124,10 +138,18 @@ const deleteInterview = async (companyName: string) => {
     // Delete the interview document
     await deleteDoc(interviewRef);
 
-    console.log("Interview deleted successfully");
+    showToast({
+      type: "success",
+      message: "Interview deleted successfully",
+    });
+
     return true; // Return true when deletion is successful
   } catch (error) {
     console.error("Error deleting interview: ", error);
+    showToast({
+      type: "error",
+      message: "Error deleting interview",
+    });
     return false; // Return false if there's an error
   }
 };
@@ -154,8 +176,6 @@ const fetchInterviews = async () => {
           ...doc.data(), // Document data
         } as InterviewType)
     );
-
-    console.log("Interviews: ", interviews);
 
     return interviews; // Return the array of interviews
   } catch (error) {

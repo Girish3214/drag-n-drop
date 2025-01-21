@@ -9,6 +9,7 @@ import {
 } from "../../services";
 import { useAppState } from "../../store";
 import { Link, useNavigate } from "react-router-dom";
+import { showToast } from "../../components/Toast";
 
 const Login = ({ type }: { type: "login" | "signup" }) => {
   const navigate = useNavigate();
@@ -30,6 +31,10 @@ const Login = ({ type }: { type: "login" | "signup" }) => {
     setUser(result);
     addUserToDataBase(result as User);
     setIsSignedIn(true);
+    showToast({
+      type: "success",
+      message: "Successfully signed in",
+    });
     navigate("/");
   };
   // Sign in with email and password
@@ -47,6 +52,11 @@ const Login = ({ type }: { type: "login" | "signup" }) => {
         afterResult(result);
       }
     } catch (error) {
+      showToast({
+        type: "error",
+        message: "Error signing in",
+      });
+
       console.error("Error signing in: ", error);
     } finally {
       setLoading(false);
@@ -57,9 +67,21 @@ const Login = ({ type }: { type: "login" | "signup" }) => {
     try {
       setLoading(true);
       await signInWithGooglePopUp().then((user) => {
-        afterResult(user);
+        if (!user) {
+          showToast({
+            type: "error",
+            message: "Error signing in with Google",
+          });
+          return;
+        } else {
+          afterResult(user);
+        }
       });
     } catch (error) {
+      showToast({
+        type: "error",
+        message: "Error signing in with Google",
+      });
       console.error("Error signing in with Google: ", error);
     } finally {
       setLoading(false);

@@ -7,12 +7,17 @@ import {
   signOut,
   User,
 } from "firebase/auth";
+import { showToast } from "../../components";
 
 const createUserWithEmail = async (email: string, password: string) => {
   return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed up
       const user = userCredential.user;
+      showToast({
+        type: "success",
+        message: "Successfully signed up",
+      });
       return user;
       // ...
     })
@@ -20,6 +25,10 @@ const createUserWithEmail = async (email: string, password: string) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log({ errorCode, errorMessage });
+      showToast({
+        type: "error",
+        message: "Error signing up",
+      });
     });
 };
 
@@ -28,20 +37,42 @@ const signInWithEmail = async (email: string, password: string) => {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
+      showToast({
+        type: "success",
+        message: "Successfully signed in",
+      });
       return user;
     })
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log({ errorCode, errorMessage });
+      showToast({
+        type: "error",
+        message: "Error signing in",
+      });
     });
 };
 
 const signInWithGooglePopUp = async () => {
-  return signInWithPopup(auth, googleProvider).then((userCredential) => {
-    const user = userCredential.user;
-    return user;
-  });
+  return signInWithPopup(auth, googleProvider)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      showToast({
+        type: "success",
+        message: "Successfully signed in",
+      });
+      return user;
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log({ errorCode, errorMessage });
+      showToast({
+        type: "error",
+        message: "Error signing in",
+      });
+    });
 };
 const addUserToDataBase = async (user: User) => {
   const userDocRef = doc(db, "users", user.email ?? "NA"); // Reference to the user document (using user UID)

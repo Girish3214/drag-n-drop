@@ -34,8 +34,6 @@ const DeleteInterview = ({
         setInterviewsList(
           interviewsList.filter((inter) => inter.id !== interviewId)
         );
-      } else {
-        console.log("something went wrong");
       }
     });
 

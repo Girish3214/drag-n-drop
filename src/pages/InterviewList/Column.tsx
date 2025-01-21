@@ -33,7 +33,6 @@ const Column = ({
 
   const handleSubmit = useCallback(
     async (interview: InterviewType) => {
-      console.log({ selectedInterviewCard, interview });
       if (selectedInterviewCard) {
         const result = await editInterview({
           ...selectedInterviewCard,
@@ -145,7 +144,6 @@ const Column = ({
     setActive(false);
   }, []);
 
-  console.log({ interviewsListMemo });
   return (
     <>
       <Modal
