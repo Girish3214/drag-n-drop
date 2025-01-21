@@ -1,14 +1,42 @@
-import { useState } from "react";
-import { signInWithPopup, UserCredential } from "firebase/auth";
-import { auth, googleProvider } from "../../services";
+import { useEffect, useState } from "react";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  UserCredential,
+} from "firebase/auth";
+import { addUserToDataBase, auth, googleProvider } from "../../services";
+import { useAppState } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
+  const navigate = useNavigate();
 
-  const [user, setUser] = useState<unknown | null>(null);
+  const setUser = useAppState((state) => state.setUser);
+  const setIsSignedIn = useAppState((state) => state.setIsSignedIn);
+
+  const [details, setDetails] = useState<{
+    email: string;
+    password: string;
+  }>({
+    email: "",
+    password: "",
+  });
+
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log({ user });
+  // Sign in with email and password
+  const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, details.email, details.password);
+    } catch (error) {
+      console.error("Error signing in: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Sign in with Google
   const handleGoogleSignIn = async () => {
     try {
@@ -19,12 +47,35 @@ const Login: React.FC = () => {
       );
       const user = result.user;
       setUser(user);
+      addUserToDataBase(user);
+      setIsSignedIn(true);
+      navigate("/");
     } catch (error) {
       console.error("Error signing in with Google: ", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        // User is logged in, set the user state
+        setUser(currentUser);
+        setIsSignedIn(true);
+        navigate("/");
+
+        console.log("User is logged in:", currentUser);
+      } else {
+        // User is logged out
+        setUser(null);
+        console.log("No user is logged in");
+      }
+    });
+
+    // Cleanup the subscription on component unmount
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -50,14 +101,32 @@ const Login: React.FC = () => {
               type="email"
               id="email"
               placeholder="email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={details.email}
+              onChange={(e) =>
+                setDetails((prev) => ({ ...prev, email: e.target.value }))
+              }
+              className="w-full mt-1 px-4 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm text-gray-400">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              placeholder="password"
+              value={details.password}
+              onChange={(e) =>
+                setDetails((prev) => ({ ...prev, password: e.target.value }))
+              }
               className="w-full mt-1 px-4 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
+            onClick={(e) => handleSignIn(e)}
             className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           >
             Login
@@ -76,11 +145,10 @@ const Login: React.FC = () => {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className={`w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ${
+            className={`w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none ${
               loading ? "cursor-wait" : ""
             }`}
             disabled={loading}
-            // className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none"
           >
             <span className="text-white text-lg">G</span>
           </button>

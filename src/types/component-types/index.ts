@@ -1,3 +1,5 @@
+import { User } from "firebase/auth";
+
 export type InterviewCategoryType =
   | "calls"
   | "in-progress"
@@ -17,9 +19,11 @@ export type InterviewType = {
 };
 
 export type TodoState = {
+  user: User | null;
   isSignedIn: boolean;
-  setIsSignedIn: (isSignedIn: boolean) => void;
   interviewsList: InterviewType[];
+  setUser: (user: User | null) => void;
+  setIsSignedIn: (isSignedIn: boolean) => void;
   setInterviewsList: (interviewsList: InterviewType[]) => void;
 };
 

@@ -5,3 +5,4 @@ export * from "./JobCard";
 export * from "./Modal";
 export * from "./DropIndicator";
 export * from "./ModalForm";
+export * from "./RouteComponent";
