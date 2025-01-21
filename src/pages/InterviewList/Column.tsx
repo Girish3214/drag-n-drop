@@ -8,6 +8,7 @@ import {
   ModalForm,
 } from "../../components";
 import { useDragEvent } from "../../hooks";
+import { addInterview, editInterview } from "../../services";
 
 const Column = ({
   title,
@@ -31,11 +32,42 @@ const Column = ({
   const [open, setOpen] = useState<boolean>(false);
 
   const handleSubmit = useCallback(
-    (interview: InterviewType) => {
-      setInterviewsList([...interviews, { ...interview, type: "calls" }]);
-      setOpen(false);
+    async (interview: InterviewType) => {
+      console.log({ selectedInterviewCard, interview });
+      if (selectedInterviewCard) {
+        const result = await editInterview({
+          ...selectedInterviewCard,
+          ...interview,
+        });
+        if (!result?.message) {
+          const filteredInterviews: InterviewType[] = interviews.map((inter) =>
+            inter.companyName.replace(/ /g, "_") ===
+            selectedInterviewCard?.companyName.replace(/ /g, "_")
+              ? { ...inter, ...interview } // Merge the updated fields
+              : inter
+          );
+
+          // Update the state with the new list of interviews
+          setInterviewsList(filteredInterviews);
+          setOpen(false);
+        }
+        return;
+      }
+      const result = await addInterview(interview);
+
+      if (!result?.message) {
+        setInterviewsList([
+          ...interviews,
+          {
+            ...interview,
+            id: interview?.companyName.replace(/ /g, "_"),
+            type: "calls",
+          },
+        ]);
+        setOpen(false);
+      }
     },
-    [interviews, setInterviewsList]
+    [interviews, setInterviewsList, selectedInterviewCard]
   );
 
   const handleClose = useCallback(() => {
@@ -94,6 +126,7 @@ const Column = ({
           }
 
           setInterviewsList([...copy]);
+          editInterview(cardToTransfer as InterviewType);
         }
       }
     },
@@ -112,9 +145,14 @@ const Column = ({
     setActive(false);
   }, []);
 
+  console.log({ interviewsListMemo });
   return (
     <>
-      <Modal open={open} onClose={handleClose} title="Add Interview">
+      <Modal
+        open={open}
+        onClose={handleClose}
+        title={selectedInterviewCard ? `Edit Interview` : `Add Interview`}
+      >
         <ModalForm
           onClose={handleClose}
           onSubmit={(interview: InterviewType) => handleSubmit(interview)}

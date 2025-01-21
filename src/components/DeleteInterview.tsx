@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Trash from "../assets/delete.svg";
 import { DeleteInterviewType } from "../types";
+import { deleteInterview } from "../services";
 
 const DeleteInterview = ({
   interviewsList,
@@ -21,9 +22,22 @@ const DeleteInterview = ({
     e.preventDefault();
 
     const interviewId = e.dataTransfer.getData("interviewId");
-    setInterviewsList(
-      interviewsList.filter((inter) => inter.id !== interviewId)
-    );
+    const companyName = interviewsList.find(
+      (inter) => inter.id === interviewId
+    )?.companyName;
+
+    if (!companyName) {
+      return;
+    }
+    deleteInterview(companyName).then((result) => {
+      if (result) {
+        setInterviewsList(
+          interviewsList.filter((inter) => inter.id !== interviewId)
+        );
+      } else {
+        console.log("something went wrong");
+      }
+    });
 
     setActive(false);
   };

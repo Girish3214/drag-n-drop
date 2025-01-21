@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import { useAppState } from "../store";
-import { dummyData } from "../utils/dummyData";
 import { handleLogout } from "../services";
 import { useNavigate } from "react-router-dom";
 
@@ -9,17 +7,12 @@ const Header = () => {
   const user = useAppState((state) => state.user);
   const isSignedIn = useAppState((state) => state.isSignedIn);
   const setIsSignedIn = useAppState((state) => state.setIsSignedIn);
-  const setInterviewsList = useAppState((state) => state.setInterviewsList);
 
   const handleSignOut = () => {
     handleLogout();
     setIsSignedIn(false);
     navigate("/login");
   };
-
-  useEffect(() => {
-    setInterviewsList(dummyData);
-  }, []);
 
   return (
     <div className="w-full p-4 flex justify-between items-center text-center shadow-md">
