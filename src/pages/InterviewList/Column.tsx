@@ -33,16 +33,24 @@ const Column = ({
 
   const handleSubmit = useCallback(
     async (interview: InterviewType) => {
+      const newInterview = {
+        ...interview,
+        nextInterviewDate: new Date(interview.nextInterviewDate).toISOString(),
+        rounds: interview.rounds.map((round) => ({
+          ...round,
+          dateOfInterview: new Date(round.dateOfInterview).toISOString(),
+        })),
+      };
       if (selectedInterviewCard) {
         const result = await editInterview({
           ...selectedInterviewCard,
-          ...interview,
+          ...newInterview,
         });
         if (!result?.message) {
           const filteredInterviews: InterviewType[] = interviews.map((inter) =>
             inter.companyName.replace(/ /g, "_") ===
             selectedInterviewCard?.companyName.replace(/ /g, "_")
-              ? { ...inter, ...interview } // Merge the updated fields
+              ? { ...inter, ...newInterview } // Merge the updated fields
               : inter
           );
 
@@ -51,19 +59,20 @@ const Column = ({
           setOpen(false);
         }
         return;
-      }
-      const result = await addInterview(interview);
+      } else {
+        const result = await addInterview(newInterview);
 
-      if (!result?.message) {
-        setInterviewsList([
-          ...interviews,
-          {
-            ...interview,
-            id: interview?.companyName.replace(/ /g, "_"),
-            type: "calls",
-          },
-        ]);
-        setOpen(false);
+        if (!result?.message) {
+          setInterviewsList([
+            ...interviews,
+            {
+              ...newInterview,
+              id: newInterview?.companyName.replace(/ /g, "_"),
+              type: "calls",
+            },
+          ]);
+          setOpen(false);
+        }
       }
     },
     [interviews, setInterviewsList, selectedInterviewCard]

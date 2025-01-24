@@ -51,10 +51,12 @@ const addInterview = async (interview: InterviewType) => {
       type: "success",
       message: "Interview added successfully",
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorMessage =
+      (error as { message?: string })?.message || "Error adding interview";
     showToast({
       type: "error",
-      message: "Error adding interview",
+      message: errorMessage,
     });
     console.error("Error adding interview: ", error);
     return {

@@ -15,7 +15,7 @@ export type InterviewType = {
   updatedTime: string;
   salaryDiscuss: string;
   salaryRange: string;
-  rounds: { experience: string }[];
+  rounds: { experience: string; dateOfInterview: string }[];
 };
 
 export type TodoState = {
