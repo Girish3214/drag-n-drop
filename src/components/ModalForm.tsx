@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Formik, Form, Field, FieldArray } from "formik";
 import * as Yup from "yup";
 import { InterviewType, ModalFormType } from "../types";
@@ -17,6 +18,25 @@ const validationSchema = Yup.object({
 });
 
 const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
+  const nextInterviewDate = useMemo(
+    () =>
+      typeof initialData?.nextInterviewDate === "string"
+        ? new Date(initialData?.nextInterviewDate).toISOString().split("T")[0]
+        : "",
+    [initialData]
+  );
+
+  const interviewRounds = useMemo(() => {
+    return initialData?.rounds?.map((round) => {
+      return {
+        experience: round.experience,
+        dateOfInterview: new Date(round.dateOfInterview)
+          .toISOString()
+          .split("T")[0],
+      };
+    });
+  }, [initialData]);
+
   return (
     <Formik
       initialValues={
@@ -25,10 +45,8 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
           salaryDiscuss: initialData?.salaryDiscuss || "",
           salaryRange: initialData?.salaryRange || "",
           description: initialData?.description || "",
-          nextInterviewDate: initialData?.nextInterviewDate || "",
-          rounds: initialData?.rounds || [
-            { experience: "", dateOfInterview: "" },
-          ],
+          nextInterviewDate: nextInterviewDate || "",
+          rounds: interviewRounds || [{ experience: "", dateOfInterview: "" }],
         } as InterviewType
       }
       validationSchema={validationSchema}
@@ -37,17 +55,17 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
       }}
     >
       {({ values, errors, touched }) => (
-        <Form className="space-y-6">
+        <Form className="space-y-6 bg-gray-900">
           {/* Two-Column Layout for Company Name and Salary Discuss */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 Company Name
               </label>
               <Field
                 name="companyName"
                 placeholder="Enter company name"
-                className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {touched.companyName && errors.companyName && (
                 <div className="text-sm text-red-500 mt-1">
@@ -57,13 +75,13 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 Salary Discuss
               </label>
               <Field
                 name="salaryDiscuss"
                 placeholder="Enter salary discuss details"
-                className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {touched.salaryDiscuss && errors.salaryDiscuss && (
                 <div className="text-sm text-red-500 mt-1">
@@ -76,13 +94,13 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
           {/* Two-Column Layout for Salary Range and Next Interview Date */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 Salary Range
               </label>
               <Field
                 name="salaryRange"
                 placeholder="Enter salary range"
-                className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {touched.salaryRange && errors.salaryRange && (
                 <div className="text-sm text-red-500 mt-1">
@@ -92,13 +110,13 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 Next Interview Date
               </label>
               <Field
                 type="date"
                 name="nextInterviewDate"
-                className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {touched.nextInterviewDate && errors.nextInterviewDate && (
                 <div className="text-sm text-red-500 mt-1">
@@ -110,14 +128,14 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
 
           {/* Full Width Field for Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Description
             </label>
             <Field
               as="textarea"
               name="description"
               placeholder="Enter description"
-              className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               rows={4}
             />
             {touched.description && errors.description && (
@@ -129,7 +147,7 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
 
           {/* Scrollable Section for Rounds of Interview */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Rounds of Interview
             </label>
             <FieldArray
@@ -137,7 +155,7 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
               render={(arrayHelpers) => (
                 <div className="space-y-4">
                   {values.rounds.length > 0 && (
-                    <div className="max-h-60 overflow-y-auto space-y-4 border p-4 rounded-lg bg-gray-50">
+                    <div className="max-h-60 overflow-y-auto space-y-4 border p-4 rounded-lg bg-neutral-500/20 border-neutral-500">
                       {values.rounds.map((_, index) => (
                         <div key={index} className="flex items-start gap-3">
                           <div className="w-2/3">
@@ -145,7 +163,7 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
                               as="textarea"
                               name={`rounds[${index}].experience`}
                               placeholder={`Round ${index + 1} Experience`}
-                              className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                              className="block w-full rounded-lg bg-gray-700 text-gray-200 border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                               rows={3}
                             />
                             {touched.rounds && errors.rounds && (
@@ -166,7 +184,7 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
                                 placeholder={`Date of ${
                                   index + 1
                                 }st Experience`}
-                                className="block w-full rounded-lg border border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                className="block w-full rounded-lg bg-gray-700 text-white border border-neutral-500 shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                               />
                               {touched.rounds && errors.rounds && (
                                 <div className="text-sm text-red-500 mt-1">
@@ -181,7 +199,7 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
                             <button
                               type="button"
                               onClick={() => arrayHelpers.remove(index)}
-                              className="px-4 py-2 border rounded-lg text-red-500 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all"
+                              className="px-4 py-2 rounded-lg bg-red-500 text-gray-100 hover:bg-red-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all"
                             >
                               Remove
                             </button>
@@ -207,13 +225,13 @@ const ModalForm = ({ onClose, onSubmit, initialData }: ModalFormType) => {
             <button
               type="reset"
               onClick={() => onClose(false)}
-              className="px-6 py-2 border rounded-lg  hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
+              className="px-6 py-2 border rounded-lg text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
             >
               Close
             </button>
             <button
               type="submit"
-              className="px-6 py-2 border rounded-lg text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
+              className="px-6 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
             >
               Submit
             </button>
